@@ -64,13 +64,11 @@ PLOTLY_LAYOUT = dict(
         gridcolor="#F1F5F9",
         zerolinecolor="#E2E8F0",
         tickfont=dict(color="#475569", size=11),
-        titlefont=dict(color="#1E293B", size=12, weight=600),
     ),
     yaxis=dict(
         gridcolor="#F1F5F9",
         zerolinecolor="#E2E8F0",
         tickfont=dict(color="#475569", size=11),
-        titlefont=dict(color="#1E293B", size=12, weight=600),
     ),
 )
 

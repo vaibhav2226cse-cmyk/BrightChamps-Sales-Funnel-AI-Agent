@@ -17,7 +17,7 @@ from utils.styles import (
     COLORS, CHART_COLORS,
 )
 from utils.data_loader import load_data
-from utils.lead_scorer import train_and_score, get_tier_summary, get_feature_importance
+from utils.lead_scorer import train_and_score, get_tier_summary
 import plotly.graph_objects as go
 import pandas as pd
 
@@ -34,13 +34,15 @@ with st.sidebar:
     - 🔵 **Cold (<10% score)** — Automated drip
     """)
 
+# ── Load data ─────────────────────────────────────────────────────────────
+df = load_data()
+
 # ── Header ───────────────────────────────────────────────────────────────
 render_hero("🎯 AI Lead Scoring Engine", "Predict conversion probability and prioritize reps' daily outreach")
 
 # ── Train model & score ──────────────────────────────────────────────────
 with st.spinner("Training predictive model & scoring 5,000 leads..."):
-    scored_df, model, preprocessor = train_and_score()
-    feature_imp = get_feature_importance(model, preprocessor)
+    scored_df, feature_imp, model_info = train_and_score(df)
 
 # ══════════════════════════════════════════════════════════════════════════
 # SECTION 1: Priority Tier Summary
