@@ -11,7 +11,7 @@ import streamlit as st
 st.set_page_config(page_title="Follow-Up Engine — BrightChamps", page_icon="📞", layout="wide")
 
 from utils.styles import (
-    inject_custom_css, render_top_banner, render_brand_logo_sidebar,
+    inject_custom_css, render_brand_logo_sidebar,
     render_metric_card, render_hero, render_divider,
     render_section_header, render_info_box, CHART_COLORS, FUNNEL_COLORS, get_plotly_layout,
 )
@@ -21,7 +21,6 @@ import pandas as pd
 import numpy as np
 
 inject_custom_css()
-render_top_banner()
 
 with st.sidebar:
     render_brand_logo_sidebar()

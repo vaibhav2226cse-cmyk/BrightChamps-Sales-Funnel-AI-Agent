@@ -17,7 +17,7 @@ st.set_page_config(
 )
 
 from utils.styles import (
-    inject_custom_css, render_top_banner, render_brand_logo_sidebar,
+    inject_custom_css, render_brand_logo_sidebar,
     render_metric_card, render_hero, render_divider, render_section_header,
     render_info_box, format_inr, CHART_COLORS, FUNNEL_COLORS, get_plotly_layout,
 )
@@ -30,9 +30,6 @@ import plotly.graph_objects as go
 
 # ── Inject styles ─────────────────────────────────────────────────────────
 inject_custom_css()
-
-# ── Top Promotional Banner ────────────────────────────────────────────────
-render_top_banner()
 
 # ── Sidebar ───────────────────────────────────────────────────────────────
 with st.sidebar:

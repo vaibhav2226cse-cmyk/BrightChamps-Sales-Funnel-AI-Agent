@@ -425,17 +425,8 @@ def inject_custom_css():
 # ---------------------------------------------------------------------------
 
 def render_top_banner():
-    """Render the official BrightChamps top promo banner."""
-    st.markdown(
-        """
-        <div class="bc-promo-banner">
-            <span>✨ 2 kids. One code. <b>25% OFF</b></span>
-            <span class="pill-code">SIBLING25</span>
-            <span>• Global STEM & Next-Gen Tech Education</span>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    """No-op: promotional coupon banner removed."""
+    pass
 
 
 def render_brand_logo_sidebar():

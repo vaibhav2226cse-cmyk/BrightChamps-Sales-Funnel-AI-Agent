@@ -11,7 +11,7 @@ import streamlit as st
 st.set_page_config(page_title="Lead Scoring — BrightChamps", page_icon="🎯", layout="wide")
 
 from utils.styles import (
-    inject_custom_css, render_top_banner, render_brand_logo_sidebar,
+    inject_custom_css, render_brand_logo_sidebar,
     render_metric_card, render_hero, render_divider,
     render_section_header, render_info_box, get_plotly_layout,
     COLORS, CHART_COLORS,
@@ -22,7 +22,6 @@ import plotly.graph_objects as go
 import pandas as pd
 
 inject_custom_css()
-render_top_banner()
 
 with st.sidebar:
     render_brand_logo_sidebar()
