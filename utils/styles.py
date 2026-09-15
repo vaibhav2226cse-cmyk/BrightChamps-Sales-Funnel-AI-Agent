@@ -480,7 +480,7 @@ def render_hero(title: str, subtitle: str = ""):
     st.markdown(
         f"""
         <div class="hero-header">
-            <div class="hero-eyebrow">A NEW KIND OF EDUCATION • FOUNDER'S OFFICE</div>
+            <div class="hero-eyebrow">A NEW KIND OF EDUCATION</div>
             <div class="hero-title">
                 {title}
             </div>
