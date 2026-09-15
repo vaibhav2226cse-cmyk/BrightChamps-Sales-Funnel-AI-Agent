@@ -8,7 +8,7 @@ Built as a deliverable for the **BrightChamps AI Forward Deployed Associate** ta
 
 ## 🖥️ Live Demo
 
-> **[Coming soon — Streamlit Cloud deployment link]**
+👉 **[Launch Live BrightChamps Sales Funnel AI Agent](https://brightchamps-sales-funnel-ai-agent-excuu4wvetklenzngsornw.streamlit.app/)**
 
 ---
 
