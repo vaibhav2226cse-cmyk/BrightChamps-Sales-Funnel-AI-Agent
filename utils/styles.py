@@ -91,9 +91,19 @@ def inject_custom_css():
         /* ── Google Fonts ────────────────────────────────────────── */
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
-        html, body, [class*="st-"] {
-            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif !important;
+        html, body {
+            font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
             color: #0F172A;
+        }
+
+        /* ── Protect Streamlit Material Icon ligatures ─────────────── */
+        [data-testid*="Icon"],
+        [data-testid*="Icon"] *,
+        [class*="material-symbols"],
+        [class*="material-icons"],
+        [data-testid="stExpanderToggleIcon"],
+        [data-testid="stExpanderToggleIcon"] * {
+            font-family: "Material Symbols Rounded", "Material Symbols Outlined", "Material Icons", sans-serif !important;
         }
 
         /* ── Clean Background ────────────────────────────────────── */
