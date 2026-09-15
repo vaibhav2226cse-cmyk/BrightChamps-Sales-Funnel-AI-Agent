@@ -24,6 +24,14 @@ Built as a deliverable for the **BrightChamps AI Forward Deployed Associate** ta
 
 ---
 
+## 📑 Case Study Deliverables (PDFs)
+
+All three formal case study deliverables are compiled as executive-grade PDF reports inside the [`deliverables/`](deliverables/) folder:
+
+1. **[1_Analysis_With_Calculations.pdf](deliverables/1_Analysis_With_Calculations.pdf)** — Stage-by-stage revenue leak quantification (₹/month), opportunity-cost formulas, latency/timezone diagnostics.
+2. **[2_Reasoning_Document.pdf](deliverables/2_Reasoning_Document.pdf)** — Strategic intervention selection, zero-code architecture, rejected alternatives trade-off analysis, and 9-day deployment roadmap.
+3. **[3_The_Executive_Memo.pdf](deliverables/3_The_Executive_Memo.pdf)** — 1-page CEO memorandum with baselines, scorecard metrics, and rep adoption risk mitigations.
+
 ## 🚀 Quick Start
 
 ### Prerequisites
