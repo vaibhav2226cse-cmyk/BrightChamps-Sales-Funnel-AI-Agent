@@ -429,17 +429,33 @@ def render_top_banner():
     pass
 
 
+def _get_logo_base64() -> str:
+    """Load and base64-encode logo.png for embedding in sidebar HTML."""
+    try:
+        from pathlib import Path
+        import base64
+        logo_path = Path(__file__).resolve().parent.parent / "logo.png"
+        if logo_path.exists():
+            with open(logo_path, "rb") as f:
+                return base64.b64encode(f.read()).decode("utf-8")
+    except Exception:
+        pass
+    return ""
+
+
 def render_brand_logo_sidebar():
     """Render the official BrightChamps logo in the sidebar."""
+    b64 = _get_logo_base64()
+    if b64:
+        icon_html = f'<img src="data:image/png;base64,{b64}" style="width:34px; height:auto; max-height:38px; object-fit:contain; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.06));" alt="BrightChamps Logo" />'
+    else:
+        icon_html = '<span style="font-size:1.4rem;">⭐</span>'
+
     st.markdown(
-        """
+        f"""
         <div style="text-align:center; padding: 1.2rem 0 0.8rem 0;">
             <div style="display:flex; align-items:center; justify-content:center; gap:8px;">
-                <span style="display:inline-flex; align-items:center; justify-content:center;
-                             width:36px; height:36px; background:#6929CA; border-radius:10px;
-                             box-shadow:0 4px 10px rgba(105,41,202,0.3); font-size:1.2rem;">
-                    ⭐
-                </span>
+                {icon_html}
                 <span style="font-size:1.6rem; font-weight:800; letter-spacing:-0.5px;">
                     <span style="color:#1E1B4B;">Bright</span><span style="color:#E11D48;">C</span><span style="color:#F59E0B;">H</span><span style="color:#10B981;">A</span><span style="color:#2563EB;">M</span><span style="color:#8B5CF6;">P</span><span style="color:#F97316;">S</span>
                 </span>
