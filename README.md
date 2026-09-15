@@ -33,8 +33,8 @@ Built as a deliverable for the **BrightChamps AI Forward Deployed Associate** ta
 
 ```bash
 # Clone the repo
-git clone https://github.com/YOUR_USERNAME/brightchamps-funnel-agent.git
-cd brightchamps-funnel-agent
+git clone https://github.com/vaibhav2226cse-cmyk/BrightChamps-Sales-Funnel-AI-Agent.git
+cd BrightChamps-Sales-Funnel-AI-Agent
 
 # Install dependencies
 pip install -r requirements.txt
