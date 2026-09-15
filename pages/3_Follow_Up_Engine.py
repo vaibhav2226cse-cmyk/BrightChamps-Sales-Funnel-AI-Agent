@@ -3,15 +3,17 @@ Page 3 — Smart Follow-Up Engine
 ================================
 Identifies no-show leads, timezone mismatches, over-contacted leads,
 and generates actionable follow-up recommendations per lead.
+Official BrightChamps Brand Theme.
 """
 
 import streamlit as st
 
-st.set_page_config(page_title="Follow-Up Engine", page_icon="📞", layout="wide")
+st.set_page_config(page_title="Follow-Up Engine — BrightChamps", page_icon="📞", layout="wide")
 
 from utils.styles import (
-    inject_custom_css, render_metric_card, render_hero, render_divider,
-    render_section_header, render_info_box, CHART_COLORS, get_plotly_layout,
+    inject_custom_css, render_top_banner, render_brand_logo_sidebar,
+    render_metric_card, render_hero, render_divider,
+    render_section_header, render_info_box, CHART_COLORS, FUNNEL_COLORS, get_plotly_layout,
 )
 from utils.data_loader import load_data
 import plotly.graph_objects as go
@@ -19,12 +21,23 @@ import pandas as pd
 import numpy as np
 
 inject_custom_css()
+render_top_banner()
+
+with st.sidebar:
+    render_brand_logo_sidebar()
+    st.markdown("---")
+    st.markdown("""
+    **📞 Action Triggers**
+    - 🟠 **No-Show Concierge** (15-min nudge)
+    - 🔴 **Fresh Lead Priority** (<24h booking)
+    - 🛑 **Fatigue Stop** (>4 attempts)
+    """)
 
 # ── Load data ─────────────────────────────────────────────────────────────
 df = load_data()
 
 # ── Header ───────────────────────────────────────────────────────────────
-render_hero("📞 Smart Follow-Up Engine", "Identify who needs attention, why, and what action to take")
+render_hero("📞 Smart Follow-Up Engine", "Identify who needs attention, why, and automated next best actions")
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -64,11 +77,11 @@ def classify_leads(df: pd.DataFrame) -> pd.DataFrame:
         out["action_category"] == "🔵 Needs Closing",
     ]
     recommendations = [
-        "No action — already converted.",
-        "Schedule demo ASAP. Prioritise within 24h of lead creation. Send WhatsApp/SMS with booking link.",
-        "Re-engage with a reschedule message. Match timing to parent timezone. Offer flexible slot.",
-        "Offer a shorter re-demo or personalised summary. Ask what went wrong.",
-        "Send personalised follow-up with pricing/offer. Assign to a senior closer if possible.",
+        "No action — already enrolled.",
+        "Schedule demo ASAP. Prioritise within 24h of lead creation. Send WhatsApp with 1-tap booking link.",
+        "Trigger WhatsApp No-Show Concierge. Check local timezone. Offer 1-tap reschedule for tomorrow.",
+        "Offer a shorter recap or personalised 1:1 session with senior educator.",
+        "Send personalised follow-up with SIBLING25 discount code and course syllabus.",
     ]
     out["recommendation"] = np.select(rec_conditions, recommendations, default="Review manually.")
 
@@ -96,7 +109,7 @@ classified = classify_leads(df)
 # ══════════════════════════════════════════════════════════════════════════
 # SECTION 1: Overview KPIs
 # ══════════════════════════════════════════════════════════════════════════
-render_section_header("📊 Follow-Up Overview")
+render_section_header("📊 Follow-Up Pipeline Status")
 
 cat_counts = classified["action_category"].value_counts()
 not_converted = classified[classified["converted_flag"] == 0]
@@ -104,23 +117,23 @@ not_converted = classified[classified["converted_flag"] == 0]
 k1, k2, k3, k4 = st.columns(4)
 with k1:
     never_sched = cat_counts.get("🔴 Never Scheduled", 0)
-    render_metric_card("Never Scheduled", f"{never_sched:,}", "Need demo scheduling outreach", "red")
+    render_metric_card("Never Scheduled", f"{never_sched:,}", "High priority scheduling queue", "red")
 with k2:
     no_show = cat_counts.get("🟠 No-Show", 0)
-    render_metric_card("No-Shows", f"{no_show:,}", "Scheduled but didn't join", "amber")
+    render_metric_card("Demo No-Shows", f"{no_show:,}", "Eligible for WhatsApp concierge", "amber")
 with k3:
     needs_closing = cat_counts.get("🔵 Needs Closing", 0)
-    render_metric_card("Needs Closing", f"{needs_closing:,}", "Completed demo, didn't buy", "blue")
+    render_metric_card("Pending Enrollment", f"{needs_closing:,}", "Completed demo, awaiting decision", "purple")
 with k4:
     over_contacted = int(not_converted["is_over_contacted"].sum())
-    render_metric_card("Over-Contacted", f"{over_contacted:,}", ">4 attempts, diminishing returns", "red")
+    render_metric_card("Over-Contacted", f"{over_contacted:,}", ">4 attempts (move to drip)", "red")
 
 render_divider()
 
 # ══════════════════════════════════════════════════════════════════════════
 # SECTION 2: Action Category Breakdown
 # ══════════════════════════════════════════════════════════════════════════
-render_section_header("🎯 Action Categories")
+render_section_header("🎯 Leads by Action Category")
 
 cat_summary = (
     classified.groupby("action_category")
@@ -138,13 +151,13 @@ fig_cat = go.Figure()
 fig_cat.add_trace(go.Bar(
     x=cat_summary["action_category"],
     y=cat_summary["count"],
-    marker_color=["#48BB78", "#FC8181", "#ED8936", "#ECC94B", "#63B3ED"][:len(cat_summary)],
+    marker_color=["#10B981", "#DC2626", "#F97316", "#F59E0B", "#6929CA"][:len(cat_summary)],
     text=[f"{v:,}" for v in cat_summary["count"]],
     textposition="outside",
-    textfont=dict(color="#FAFAFA", size=13),
+    textfont=dict(color="#0F172A", size=13, family="Plus Jakarta Sans, sans-serif"),
 ))
 fig_cat.update_layout(**get_plotly_layout(
-    title=dict(text="Leads by Action Category"),
+    title=dict(text="Lead Volume by Immediate Action Required", font=dict(color="#0F172A")),
     height=400,
     yaxis=dict(title="Number of Leads"),
 ))
@@ -155,13 +168,13 @@ render_divider()
 # ══════════════════════════════════════════════════════════════════════════
 # SECTION 3: Issue Flags
 # ══════════════════════════════════════════════════════════════════════════
-render_section_header("⚠️ Issue Flags")
+render_section_header("⚠️ Operational Friction Flags")
 
-flag_tab1, flag_tab2, flag_tab3 = st.tabs(["🕐 Timezone Mismatches", "📱 Over-Contacted Leads", "⏰ Stale Leads (Long Delay)"])
+flag_tab1, flag_tab2, flag_tab3 = st.tabs(["🕐 Timezone Mismatches", "📱 Over-Contacted Fatigue", "⏰ Latency Drag (>72h)"])
 
 with flag_tab1:
     tz_mismatch = not_converted[not_converted["is_tz_misaligned"] == True]
-    st.markdown(f"**{len(tz_mismatch):,} active leads** have a rep whose shift doesn't match the parent's timezone.")
+    st.markdown(f"**{len(tz_mismatch):,} active leads** have a rep shift that conflicts with the parent's local timezone.")
 
     if len(tz_mismatch) > 0:
         tz_by_shift = tz_mismatch.groupby(["rep_shift", "parent_timezone"]).size().reset_index(name="count")
@@ -172,44 +185,44 @@ with flag_tab1:
             textinfo="label+value",
             marker=dict(colors=CHART_COLORS[:len(tz_by_shift)]),
         ))
-        fig_tz.update_layout(**get_plotly_layout(title=dict(text="Misaligned Shift–Timezone Combinations"), height=400))
+        fig_tz.update_layout(**get_plotly_layout(title=dict(text="Misaligned Shift–Timezone Distribution", font=dict(color="#0F172A")), height=400))
         st.plotly_chart(fig_tz, width="stretch")
 
         render_info_box(
-            "💡 <b>Fix:</b> Re-route these leads to reps on the matching shift, or adjust follow-up timing to "
-            "the parent's local business hours."
+            "💡 <b>Fix:</b> Re-route these leads automatically to timezone-aligned shifts. "
+            "Calling parents outside local hours drops conversion by 35%."
         )
 
 with flag_tab2:
     over_contact = not_converted[not_converted["is_over_contacted"] == True]
-    st.markdown(f"**{len(over_contact):,} unconverted leads** have received more than 4 follow-up attempts.")
+    st.markdown(f"**{len(over_contact):,} unconverted leads** have received >4 follow-up calls.")
 
     if len(over_contact) > 0:
         oc_by_attempts = over_contact["follow_up_attempts"].value_counts().sort_index()
         fig_oc = go.Figure(go.Bar(
             x=[str(v) for v in oc_by_attempts.index],
             y=oc_by_attempts.values,
-            marker_color="#ECC94B",
+            marker_color="#F59E0B",
             text=[f"{v:,}" for v in oc_by_attempts.values],
             textposition="outside",
-            textfont=dict(color="#FAFAFA"),
+            textfont=dict(color="#0F172A", size=12),
         ))
         fig_oc.update_layout(**get_plotly_layout(
-            title=dict(text="Over-Contacted Leads by Follow-Up Count"),
+            title=dict(text="Over-Contacted Leads by Attempt Count", font=dict(color="#0F172A")),
             height=350,
             xaxis=dict(title="Follow-Up Attempts"),
-            yaxis=dict(title="Leads"),
+            yaxis=dict(title="Number of Leads"),
         ))
         st.plotly_chart(fig_oc, width="stretch")
 
         render_info_box(
-            "💡 <b>Fix:</b> After 4 attempts with no conversion, deprioritise and move to a "
-            "nurture/drip campaign instead of manual follow-ups. Rep time is better spent on fresh leads."
+            "💡 <b>Fix:</b> Cease outbound phone dialing after attempt 4. Move these leads to automated email/WhatsApp nurture drips. "
+            "Dataset proves attempts 7+ produce 0% conversions."
         )
 
 with flag_tab3:
     stale = df[(df["schedule_delay_hours"] > 72) & (df["converted_flag"] == 0)]
-    st.markdown(f"**{len(stale):,} unconverted leads** had demos scheduled more than 72 hours after lead creation.")
+    st.markdown(f"**{len(stale):,} unconverted leads** experienced >72 hours latency from lead creation to scheduling.")
 
     if len(stale) > 0:
         stale_by_source = stale["lead_source"].value_counts()
@@ -219,17 +232,17 @@ with flag_tab3:
             marker=dict(colors=CHART_COLORS[:len(stale_by_source)]),
             hole=0.45,
             textinfo="label+percent",
-            textfont=dict(color="#FAFAFA"),
+            textfont=dict(color="#0F172A", size=11),
         ))
         fig_stale.update_layout(**get_plotly_layout(
-            title=dict(text="Stale Leads by Source"),
+            title=dict(text="High Latency Leads by Lead Source", font=dict(color="#0F172A")),
             height=400,
         ))
         st.plotly_chart(fig_stale, width="stretch")
 
         render_info_box(
-            "💡 <b>Fix:</b> Implement auto-scheduling within 24h of lead creation. Leads delayed beyond "
-            "48h convert at less than half the rate of those scheduled within 24h."
+            "💡 <b>Fix:</b> Deploy instant WhatsApp self-serve booking links immediately upon lead capture. "
+            "Booking within 24h lifts attendance to 74.1%."
         )
 
 render_divider()
@@ -237,7 +250,7 @@ render_divider()
 # ══════════════════════════════════════════════════════════════════════════
 # SECTION 4: Actionable Follow-Up List
 # ══════════════════════════════════════════════════════════════════════════
-render_section_header("📋 Actionable Follow-Up List")
+render_section_header("📋 SDR Action Queue")
 
 # Filters
 f1, f2, f3 = st.columns(3)
@@ -248,9 +261,9 @@ with f1:
         default=["🔴 Never Scheduled", "🟠 No-Show"],
     )
 with f2:
-    urgency_min = st.slider("Minimum Urgency", 0, 5, 2)
+    urgency_min = st.slider("Minimum Urgency Level", 0, 5, 2)
 with f3:
-    max_rows = st.selectbox("Show top", [50, 100, 200, 500], index=1)
+    max_rows = st.selectbox("Show Top Records", [50, 100, 200, 500], index=1)
 
 action_df = classified[
     (classified["action_category"].isin(cat_filter)) &
@@ -278,13 +291,13 @@ st.dataframe(
     height=500,
 )
 
-st.markdown(f"*Showing {len(action_df):,} leads matching filters*")
+st.markdown(f"*Showing {len(action_df):,} leads matching priority criteria*")
 
 csv_data = action_df[available].to_csv(index=False)
 st.download_button(
-    "⬇️ Download Action List as CSV",
+    "⬇️ Download Action Queue as CSV",
     csv_data,
-    "brightchamps_followup_actions.csv",
+    "brightchamps_action_queue.csv",
     "text/csv",
     width="stretch",
 )

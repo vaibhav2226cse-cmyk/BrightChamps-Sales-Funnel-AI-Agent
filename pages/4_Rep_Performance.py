@@ -3,15 +3,17 @@ Page 4 — Rep Performance Tracker
 ==================================
 Compare all 12 sales reps on scheduling, demo joins, conversion,
 and timezone alignment. Identify coaching opportunities.
+Official BrightChamps Brand Theme.
 """
 
 import streamlit as st
 
-st.set_page_config(page_title="Rep Performance", page_icon="👥", layout="wide")
+st.set_page_config(page_title="Rep Performance — BrightChamps", page_icon="👥", layout="wide")
 
 from utils.styles import (
-    inject_custom_css, render_metric_card, render_hero, render_divider,
-    render_section_header, render_info_box, CHART_COLORS, get_plotly_layout,
+    inject_custom_css, render_top_banner, render_brand_logo_sidebar,
+    render_metric_card, render_hero, render_divider,
+    render_section_header, render_info_box, CHART_COLORS, FUNNEL_COLORS, get_plotly_layout,
 )
 from utils.data_loader import load_data
 from utils.funnel_analyzer import get_segmented_funnel
@@ -20,12 +22,23 @@ import pandas as pd
 import numpy as np
 
 inject_custom_css()
+render_top_banner()
+
+with st.sidebar:
+    render_brand_logo_sidebar()
+    st.markdown("---")
+    st.markdown("""
+    **👥 Rep Diagnostics**
+    - 🏆 Leaderboard & Top Closers
+    - 📉 Scheduling vs Demo Join gap
+    - 🕐 Shift & Timezone alignment
+    """)
 
 # ── Load data ─────────────────────────────────────────────────────────────
 df = load_data()
 
 # ── Header ───────────────────────────────────────────────────────────────
-render_hero("👥 Rep Performance Tracker", "Compare all reps — spot top performers and coaching opportunities")
+render_hero("👥 Sales Rep Performance", "Compare rep conversion, full-funnel velocity, and automated coaching alerts")
 
 # ══════════════════════════════════════════════════════════════════════════
 # Build rep stats
@@ -60,7 +73,7 @@ rep_stats = rep_stats.sort_values("conversion_rate", ascending=False)
 # ══════════════════════════════════════════════════════════════════════════
 # SECTION 1: Top-level KPIs
 # ══════════════════════════════════════════════════════════════════════════
-render_section_header("🏆 Leaderboard")
+render_section_header("🏆 Sales Rep Leaderboard")
 
 top_rep = rep_stats.iloc[0]
 bottom_rep = rep_stats.iloc[-1]
@@ -69,33 +82,33 @@ avg_conv = rep_stats["conversion_rate"].mean()
 k1, k2, k3, k4 = st.columns(4)
 with k1:
     render_metric_card(
-        "Top Rep",
+        "Top Performer",
         top_rep["rep_assigned"],
-        f"Conv: {top_rep['conversion_rate']:.1%} · {int(top_rep['converted'])} conversions",
+        f"Conv: {top_rep['conversion_rate']:.1%} · {int(top_rep['converted'])} enrollments",
         "green",
     )
 with k2:
     render_metric_card(
-        "Bottom Rep",
+        "Needs Support",
         bottom_rep["rep_assigned"],
-        f"Conv: {bottom_rep['conversion_rate']:.1%} · {int(bottom_rep['converted'])} conversions",
+        f"Conv: {bottom_rep['conversion_rate']:.1%} · {int(bottom_rep['converted'])} enrollments",
         "red",
     )
 with k3:
-    render_metric_card("Avg Conversion", f"{avg_conv:.1%}", f"Across {len(rep_stats)} reps", "gradient")
+    render_metric_card("Team Average Conversion", f"{avg_conv:.1%}", f"Across {len(rep_stats)} sales reps", "purple")
 with k4:
     spread = top_rep["conversion_rate"] - bottom_rep["conversion_rate"]
-    render_metric_card("Performance Spread", f"{spread:.1%}", "Gap between best & worst", "amber")
+    render_metric_card("Performance Gap", f"{spread:.1%}", "Top vs bottom rep delta", "amber")
 
 render_divider()
 
 # ══════════════════════════════════════════════════════════════════════════
 # SECTION 2: Multi-metric comparison
 # ══════════════════════════════════════════════════════════════════════════
-render_section_header("📊 Rep Comparison — All Metrics")
+render_section_header("📊 Multi-Metric Rep Comparison")
 
 metric_tab1, metric_tab2, metric_tab3 = st.tabs([
-    "📈 Conversion Rate", "🔽 Full Funnel Rates", "📊 Close Rate (Demo→Sale)"
+    "📈 Lead-to-Conversion Rate", "🔽 Full Funnel Conversion", "🎯 Closing Efficiency (Demo → Sale)"
 ])
 
 with metric_tab1:
@@ -106,17 +119,17 @@ with metric_tab1:
         x=sorted_conv["conversion_rate"],
         orientation="h",
         marker_color=[
-            "#48BB78" if v >= avg_conv else "#FC8181"
+            "#10B981" if v >= avg_conv else "#E11D48"
             for v in sorted_conv["conversion_rate"]
         ],
         text=[f"{v:.1%}" for v in sorted_conv["conversion_rate"]],
         textposition="outside",
-        textfont=dict(color="#FAFAFA", size=12),
+        textfont=dict(color="#0F172A", size=12, family="Plus Jakarta Sans, sans-serif"),
     ))
-    fig_conv.add_vline(x=avg_conv, line_dash="dash", line_color="#ECC94B",
-                       annotation_text=f"Avg: {avg_conv:.1%}", annotation_font_color="#ECC94B")
+    fig_conv.add_vline(x=avg_conv, line_dash="dash", line_color="#6929CA",
+                       annotation_text=f"Team Mean: {avg_conv:.1%}", annotation_font_color="#6929CA")
     fig_conv.update_layout(**get_plotly_layout(
-        title=dict(text="Conversion Rate by Rep (Lead → Converted)"),
+        title=dict(text="Overall Lead Conversion Rate by Rep", font=dict(color="#0F172A")),
         height=450,
         xaxis=dict(title="Conversion Rate", tickformat=".1%"),
     ))
@@ -126,10 +139,10 @@ with metric_tab2:
     sorted_rep = rep_stats.sort_values("rep_assigned")
     fig_funnel = go.Figure()
     metrics = [
-        ("schedule_rate", "Schedule Rate", "#667EEA"),
-        ("join_rate", "Join Rate", "#9F7AEA"),
-        ("completion_rate", "Completion Rate", "#ECC94B"),
-        ("conversion_rate", "Conversion Rate", "#48BB78"),
+        ("schedule_rate", "Schedule Rate", "#6929CA"),
+        ("join_rate", "Join Rate", "#8B5CF6"),
+        ("completion_rate", "Completion Rate", "#F59E0B"),
+        ("conversion_rate", "Conversion Rate", "#10B981"),
     ]
     for metric, label, color in metrics:
         fig_funnel.add_trace(go.Bar(
@@ -139,13 +152,13 @@ with metric_tab2:
             marker_color=color,
             text=[f"{v:.0%}" for v in sorted_rep[metric]],
             textposition="outside",
-            textfont=dict(color="#FAFAFA", size=9),
+            textfont=dict(color="#0F172A", size=9),
         ))
     fig_funnel.update_layout(**get_plotly_layout(
-        title=dict(text="Full Funnel Rates by Rep"),
+        title=dict(text="Funnel Stage Retention by Rep", font=dict(color="#0F172A")),
         height=450,
         barmode="group",
-        yaxis=dict(title="Rate", tickformat=".0%"),
+        yaxis=dict(title="Retention Rate", tickformat=".0%"),
     ))
     st.plotly_chart(fig_funnel, width="stretch")
 
@@ -158,17 +171,17 @@ with metric_tab3:
         x=sorted_close["close_rate"],
         orientation="h",
         marker_color=[
-            "#48BB78" if v >= avg_close else "#FC8181"
+            "#10B981" if v >= avg_close else "#E11D48"
             for v in sorted_close["close_rate"]
         ],
         text=[f"{v:.1%}" for v in sorted_close["close_rate"]],
         textposition="outside",
-        textfont=dict(color="#FAFAFA", size=12),
+        textfont=dict(color="#0F172A", size=12),
     ))
-    fig_close.add_vline(x=avg_close, line_dash="dash", line_color="#ECC94B",
-                        annotation_text=f"Avg: {avg_close:.1%}", annotation_font_color="#ECC94B")
+    fig_close.add_vline(x=avg_close, line_dash="dash", line_color="#6929CA",
+                       annotation_text=f"Team Mean: {avg_close:.1%}", annotation_font_color="#6929CA")
     fig_close.update_layout(**get_plotly_layout(
-        title=dict(text="Close Rate by Rep (Completed Demo → Converted)"),
+        title=dict(text="Demo Close Rate by Rep (Completed Demo → Converted)", font=dict(color="#0F172A")),
         height=450,
         xaxis=dict(title="Close Rate", tickformat=".0%"),
     ))
@@ -179,7 +192,7 @@ render_divider()
 # ══════════════════════════════════════════════════════════════════════════
 # SECTION 3: Timezone Alignment per Rep
 # ══════════════════════════════════════════════════════════════════════════
-render_section_header("🕐 Timezone Alignment by Rep")
+render_section_header("🕐 Timezone Alignment per Rep")
 
 tz_col1, tz_col2 = st.columns([2, 1])
 
@@ -191,22 +204,22 @@ with tz_col1:
         x=sorted_tz["tz_aligned_pct"],
         orientation="h",
         marker_color=[
-            "#48BB78" if v >= 0.6 else "#ECC94B" if v >= 0.4 else "#FC8181"
+            "#10B981" if v >= 0.6 else "#F59E0B" if v >= 0.4 else "#DC2626"
             for v in sorted_tz["tz_aligned_pct"]
         ],
         text=[f"{v:.0%}" for v in sorted_tz["tz_aligned_pct"]],
         textposition="outside",
-        textfont=dict(color="#FAFAFA", size=12),
+        textfont=dict(color="#0F172A", size=12),
     ))
     fig_tz.update_layout(**get_plotly_layout(
-        title=dict(text="% of Leads that are Timezone-Aligned per Rep"),
+        title=dict(text="% of Assigned Leads Aligned with Rep Shift Timezone", font=dict(color="#0F172A")),
         height=450,
         xaxis=dict(title="TZ Alignment %", tickformat=".0%", range=[0, 1.1]),
     ))
     st.plotly_chart(fig_tz, width="stretch")
 
 with tz_col2:
-    st.markdown("**Rep Shifts**")
+    st.markdown("<h4 style='color:#0F172A; font-size:1.05rem;'>Rep Shift Roster</h4>", unsafe_allow_html=True)
     shift_info = rep_stats[["rep_assigned", "shift", "tz_aligned_pct"]].copy()
     shift_info["tz_aligned_pct"] = shift_info["tz_aligned_pct"].apply(lambda x: f"{x:.0%}")
     st.dataframe(
@@ -217,8 +230,8 @@ with tz_col2:
         hide_index=True,
     )
     render_info_box(
-        "💡 Reps with low TZ alignment are handling leads outside their natural timezone. "
-        "Re-routing these leads can improve contact rates and conversions."
+        "💡 Reps with low timezone alignment (<40%) suffer reduced contact rates. "
+        "Re-routing these leads to matching shifts immediately boosts conversion without training overhead."
     )
 
 render_divider()
@@ -268,7 +281,7 @@ render_divider()
 # ══════════════════════════════════════════════════════════════════════════
 # SECTION 5: Coaching Insights
 # ══════════════════════════════════════════════════════════════════════════
-render_section_header("💡 Coaching Insights")
+render_section_header("💡 Auto-Generated Coaching Insights")
 
 insights = []
 
@@ -280,8 +293,8 @@ high_sched_low_close = rep_stats[
 if len(high_sched_low_close) > 0:
     reps_list = ", ".join(high_sched_low_close["rep_assigned"].tolist())
     insights.append(
-        f"🔍 **High Schedule, Low Close:** {reps_list} — Schedule demos well but struggle to convert. "
-        f"May need closing skill coaching or better demo scripts."
+        f"🔍 **High Scheduling, Low Closing:** {reps_list} — Excellent at getting parents into demos, but below average closing efficiency. "
+        f"Recommended action: Demo pitch refresher and closing objection handling."
     )
 
 # Find reps with low scheduling rates
@@ -289,8 +302,8 @@ low_sched = rep_stats[rep_stats["schedule_rate"] < rep_stats["schedule_rate"].qu
 if len(low_sched) > 0:
     reps_list = ", ".join(low_sched["rep_assigned"].tolist())
     insights.append(
-        f"📅 **Low Scheduling:** {reps_list} — Below-average scheduling rates. "
-        f"May need faster lead response processes or scheduling tool support."
+        f"📅 **Low Scheduling Velocity:** {reps_list} — Sched rate is bottom quartile. "
+        f"Recommended action: Review speed-to-call (<24h) and provide WhatsApp automated scheduling link templates."
     )
 
 # Find reps with low TZ alignment
@@ -298,8 +311,8 @@ low_tz = rep_stats[rep_stats["tz_aligned_pct"] < 0.4]
 if len(low_tz) > 0:
     reps_list = ", ".join(low_tz["rep_assigned"].tolist())
     insights.append(
-        f"🕐 **Timezone Mismatch:** {reps_list} — Less than 40% of their leads match their shift timezone. "
-        f"Lead routing rules should be reviewed."
+        f"🕐 **Severe Timezone Mismatch:** {reps_list} — More than 60% of assigned leads fall outside their shift hours. "
+        f"Recommended action: Re-allocate geographic queue in CRM."
     )
 
 # Star performers
@@ -307,12 +320,18 @@ star = rep_stats[rep_stats["conversion_rate"] > rep_stats["conversion_rate"].qua
 if len(star) > 0:
     reps_list = ", ".join(star["rep_assigned"].tolist())
     insights.append(
-        f"⭐ **Star Performers:** {reps_list} — Top quartile conversion rate. "
-        f"Study their approach and share best practices with the team."
+        f"⭐ **Star Performers:** {reps_list} — Top quartile conversion rate across all metrics. "
+        f"Action: Have these reps run peer workshops on parent demo engagement."
     )
 
 for insight in insights:
-    st.markdown(insight)
-
-if not insights:
-    st.info("No specific coaching insights identified — rep performance is relatively uniform.")
+    st.markdown(
+        f"""
+        <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-left:4px solid #6929CA;
+                    border-radius:10px; padding:14px 18px; margin:8px 0; font-size:0.92rem; color:#1E293B;
+                    box-shadow:0 2px 8px rgba(105,41,202,0.04);">
+            {insight}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
