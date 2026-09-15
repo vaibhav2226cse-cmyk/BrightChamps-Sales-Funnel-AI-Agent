@@ -457,7 +457,7 @@ def render_brand_logo_sidebar():
             <div style="display:flex; align-items:center; justify-content:center; gap:8px;">
                 {icon_html}
                 <span style="font-size:1.6rem; font-weight:800; letter-spacing:-0.5px;">
-                    <span style="color:#1E1B4B;">Bright</span><span style="color:#E11D48;">C</span><span style="color:#F59E0B;">H</span><span style="color:#10B981;">A</span><span style="color:#2563EB;">M</span><span style="color:#8B5CF6;">P</span><span style="color:#F97316;">S</span>
+                    <span style="color:#6929CA;">Bright</span><span style="color:#E11D48;">C</span><span style="color:#F59E0B;">H</span><span style="color:#10B981;">A</span><span style="color:#2563EB;">M</span><span style="color:#8B5CF6;">P</span><span style="color:#F97316;">S</span>
                 </span>
             </div>
             <div style="font-size:0.76rem; font-weight:700; color:#6929CA; letter-spacing:1px;
